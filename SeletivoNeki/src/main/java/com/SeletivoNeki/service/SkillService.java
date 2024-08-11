@@ -81,4 +81,23 @@ public class SkillService {
         return new UsuarioSkillResponseDto(usuarioSkillRepository.save(new UsuarioSkill(usuario, skill, usuarioSkillDto.getLevel())));
     }
 
+    public void deleteSkill(Long usuarioId, Long skillId) {
+        UsuarioSkill usuarioSkill = usuarioSkillRepository.findByUsuarioIdAndSkillId(usuarioId, skillId)
+                .orElseThrow(() -> new NotFoundException("Skill não encontrada para o usuário."));
+        usuarioSkillRepository.delete(usuarioSkill);
+    }
+
+    public UsuarioSkillResponseDto updateSkill(Long usuarioId, Long skillId, UsuarioSkillRequestDto usuarioSkillDto) {
+        UsuarioSkill usuarioSkill = usuarioSkillRepository.findByUsuarioIdAndSkillId(usuarioId, skillId)
+                .orElseThrow(() -> new NotFoundException("Skill não encontrada para o usuário."));
+        usuarioSkill.setLevel(usuarioSkillDto.getLevel());
+        return new UsuarioSkillResponseDto(usuarioSkillRepository.save(usuarioSkill));
+    }
+
+    public List<UsuarioSkillResponseDto> findAllSkills() {
+        List<UsuarioSkill> skills = usuarioSkillRepository.findAll();
+        return skills.stream().map(UsuarioSkillResponseDto::new).toList();
+    }
+
+
 }

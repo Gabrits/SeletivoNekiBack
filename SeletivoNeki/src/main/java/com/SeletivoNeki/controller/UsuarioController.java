@@ -25,4 +25,24 @@ public class UsuarioController {
     public ResponseEntity<UsuarioSkillResponseDto>atribuirSkill(@RequestBody UsuarioSkillRequestDto dto){
         return ResponseEntity.ok(skillService.atribuirSkill(dto));
     }
+
+    @DeleteMapping("/skills/{usuarioId}/{skillId}")
+    public ResponseEntity<Void> deleteSkill(@PathVariable Long usuarioId, @PathVariable Long skillId) {
+        skillService.deleteSkill(usuarioId, skillId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/skills/{usuarioId}/{skillId}")
+    public ResponseEntity<UsuarioSkillResponseDto> updateSkill(
+            @PathVariable Long usuarioId,
+            @PathVariable Long skillId,
+            @RequestBody UsuarioSkillRequestDto dto) {
+        return ResponseEntity.ok(skillService.updateSkill(usuarioId, skillId, dto));
+    }
+
+    @GetMapping("/skills")
+    public ResponseEntity<List<UsuarioSkillResponseDto>> findAllSkills() {
+        return ResponseEntity.ok(skillService.findAllSkills());
+    }
+
 }

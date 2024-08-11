@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface UsuarioSkillRepository extends JpaRepository<UsuarioSkill, Long> {
@@ -16,4 +17,6 @@ public interface UsuarioSkillRepository extends JpaRepository<UsuarioSkill, Long
             "JOIN skills s ON s.id = us.skill_id\n" +
             "WHERE u.id = :id;",nativeQuery = true)
     List<UsuarioSkill> findAllSkillsByUserId(Long id);
+
+    Optional<UsuarioSkill> findByUsuarioIdAndSkillId(Long usuarioId, Long skillId);
 }
