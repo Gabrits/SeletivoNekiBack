@@ -1,5 +1,6 @@
 package com.SeletivoNeki.model;
 
+import com.SeletivoNeki.dto.UsuarioSkillRequestDto;
 import jakarta.persistence.*;
 
 @Entity
@@ -18,16 +19,23 @@ public class UsuarioSkill {
     @JoinColumn(name = "skill_id", nullable = false)
     private Skill skill;
 
-    private String level;
+    @Enumerated(EnumType.STRING)
+    private LevelSkill level;
 
     public UsuarioSkill() {
     }
 
-    public UsuarioSkill(Usuario usuario, Skill skill, String level, Long id) {
+    public UsuarioSkill(Usuario usuario, Skill skill, LevelSkill level, Long id) {
         this.usuario = usuario;
         this.skill = skill;
         this.level = level;
         this.id = id;
+    }
+
+    public UsuarioSkill(Usuario usuario, Skill skill, LevelSkill level) {
+        this.usuario = usuario;
+        this.skill = skill;
+        this.level = level;
     }
 
     public Long getId() {
@@ -54,11 +62,11 @@ public class UsuarioSkill {
         this.skill = skill;
     }
 
-    public String getLevel() {
+    public LevelSkill getLevel() {
         return level;
     }
 
-    public void setLevel(String level) {
+    public void setLevel(LevelSkill level) {
         this.level = level;
     }
 }

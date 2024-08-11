@@ -1,10 +1,18 @@
 package com.SeletivoNeki.service;
 
+import com.SeletivoNeki.Exception.NotFoundException;
 import com.SeletivoNeki.dto.SkillDto;
+import com.SeletivoNeki.dto.UsuarioSkillRequestDto;
+import com.SeletivoNeki.dto.UsuarioSkillResponseDto;
 import com.SeletivoNeki.model.Skill;
+import com.SeletivoNeki.model.Usuario;
+import com.SeletivoNeki.model.UsuarioSkill;
 import com.SeletivoNeki.repository.SkillRepository;
+import com.SeletivoNeki.repository.UsuarioRepository;
+import com.SeletivoNeki.repository.UsuarioSkillRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +22,12 @@ public class SkillService {
 
     @Autowired
     private SkillRepository skillRepository;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private UsuarioSkillRepository usuarioSkillRepository;
 
     public List<SkillDto> listarSkills () {
         List<Skill> skills = skillRepository.findAll();
@@ -51,6 +65,20 @@ public class SkillService {
         } else {
             throw new RuntimeException("Habilidade não encontrada");
         }
+    }
+
+    public List<UsuarioSkillResponseDto> findAllSkillsByUserId(Long id){
+        if (usuarioRepository.findById(id).isEmpty()){
+            throw new NotFoundException("Skill não encontrada.");
+        }
+        List<UsuarioSkillResponseDto> skills = usuarioSkillRepository.findAllSkillsByUserId(id).stream().map(UsuarioSkillResponseDto::new).toList();
+        return skills;
+    }
+
+    public UsuarioSkillResponseDto atribuirSkill(UsuarioSkillRequestDto usuarioSkillDto){
+        Usuario usuario = usuarioRepository.findById(usuarioSkillDto.getUsuarioId()).orElseThrow(NotFoundException::new);
+        Skill skill = skillRepository.findById(usuarioSkillDto.getSkillId()).orElseThrow(NotFoundException::new);
+        return new UsuarioSkillResponseDto(usuarioSkillRepository.save(new UsuarioSkill(usuario, skill, usuarioSkillDto.getLevel())));
     }
 
 }
