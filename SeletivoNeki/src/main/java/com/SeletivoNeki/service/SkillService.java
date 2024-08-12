@@ -1,8 +1,15 @@
 package com.SeletivoNeki.service;
 
+import com.SeletivoNeki.exception.NotFoundException;
 import com.SeletivoNeki.dto.SkillDto;
+import com.SeletivoNeki.dto.UsuarioSkillRequestDto;
+import com.SeletivoNeki.dto.UsuarioSkillResponseDto;
 import com.SeletivoNeki.model.Skill;
+import com.SeletivoNeki.model.Usuario;
+import com.SeletivoNeki.model.UsuarioSkill;
 import com.SeletivoNeki.repository.SkillRepository;
+import com.SeletivoNeki.repository.UsuarioRepository;
+import com.SeletivoNeki.repository.UsuarioSkillRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +21,12 @@ public class SkillService {
 
     @Autowired
     private SkillRepository skillRepository;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private UsuarioSkillRepository usuarioSkillRepository;
 
     public List<SkillDto> listarSkills () {
         List<Skill> skills = skillRepository.findAll();
@@ -52,5 +65,38 @@ public class SkillService {
             throw new RuntimeException("Habilidade não encontrada");
         }
     }
+
+    public List<UsuarioSkillResponseDto> findAllSkillsByUserId(Long id){
+        if (usuarioRepository.findById(id).isEmpty()){
+            throw new NotFoundException("Skill não encontrada.");
+        }
+        List<UsuarioSkillResponseDto> skills = usuarioSkillRepository.findAllSkillsByUserId(id).stream().map(UsuarioSkillResponseDto::new).toList();
+        return skills;
+    }
+
+    public UsuarioSkillResponseDto atribuirSkill(UsuarioSkillRequestDto usuarioSkillDto){
+        Usuario usuario = usuarioRepository.findById(usuarioSkillDto.getUsuarioId()).orElseThrow(NotFoundException::new);
+        Skill skill = skillRepository.findById(usuarioSkillDto.getSkillId()).orElseThrow(NotFoundException::new);
+        return new UsuarioSkillResponseDto(usuarioSkillRepository.save(new UsuarioSkill(usuario, skill, usuarioSkillDto.getLevel())));
+    }
+
+    public void deleteSkill(Long usuarioId, Long skillId) {
+        UsuarioSkill usuarioSkill = usuarioSkillRepository.findByUsuarioIdAndSkillId(usuarioId, skillId)
+                .orElseThrow(() -> new NotFoundException("Skill não encontrada para o usuário."));
+        usuarioSkillRepository.delete(usuarioSkill);
+    }
+
+    public UsuarioSkillResponseDto updateSkill(Long usuarioId, Long skillId, UsuarioSkillRequestDto usuarioSkillDto) {
+        UsuarioSkill usuarioSkill = usuarioSkillRepository.findByUsuarioIdAndSkillId(usuarioId, skillId)
+                .orElseThrow(() -> new NotFoundException("Skill não encontrada para o usuário."));
+        usuarioSkill.setLevel(usuarioSkillDto.getLevel());
+        return new UsuarioSkillResponseDto(usuarioSkillRepository.save(usuarioSkill));
+    }
+
+    public List<UsuarioSkillResponseDto> findAllSkills() {
+        List<UsuarioSkill> skills = usuarioSkillRepository.findAll();
+        return skills.stream().map(UsuarioSkillResponseDto::new).toList();
+    }
+
 
 }

@@ -1,5 +1,6 @@
 package com.SeletivoNeki.model;
 
+import com.SeletivoNeki.Enum.UsuarioRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -78,5 +79,9 @@ public class Usuario implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public Long getId(){
+        return id;
     }
 }

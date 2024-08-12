@@ -1,34 +1,54 @@
 package com.SeletivoNeki.controller;
 
-import com.SeletivoNeki.dto.UsuarioDto;
-import com.SeletivoNeki.model.Usuario;
-import com.SeletivoNeki.service.UsuarioService;
+import com.SeletivoNeki.dto.UsuarioSkillRequestDto;
+import com.SeletivoNeki.dto.UsuarioSkillResponseDto;
+import com.SeletivoNeki.service.SkillService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+import java.util.List;
+
+@RestController
 @RequestMapping("/usuarios")
 public class UsuarioController {
 
     @Autowired
-    private UsuarioService usuarioService;
+    private SkillService skillService;
 
-    @PostMapping("/cadastro")
-    public ResponseEntity<Usuario> cadastrar(@RequestBody UsuarioDto usuarioDto) {
-        Usuario usuario = usuarioService.cadastrar(usuarioDto);
-    return ResponseEntity.ok(usuario);
+    @Operation(summary = "Lista todas as skills de um determinado usuário.")
+    @GetMapping("/skills/{id}")
+    public ResponseEntity<List<UsuarioSkillResponseDto>>findAllSkillsByUserId(@PathVariable Long id){
+    return ResponseEntity.ok(skillService.findAllSkillsByUserId(id));
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<Usuario> login(@RequestBody UsuarioDto usuarioDto) {
-        Usuario usuario = usuarioService.autenticar(usuarioDto);
-        if (usuario != null) {
-            return ResponseEntity.ok(usuario);
-        }
-        return ResponseEntity.status(401).build();
+    @Operation(summary = "Atribui skills ao usuario selecionado")
+    @PostMapping("/skills")
+    public ResponseEntity<UsuarioSkillResponseDto>atribuirSkill(@RequestBody UsuarioSkillRequestDto dto){
+        return ResponseEntity.ok(skillService.atribuirSkill(dto));
     }
+
+    @Operation(summary = "Deleta a skill do usuario selecionado")
+    @DeleteMapping("/skills/{usuarioId}/{skillId}")
+    public ResponseEntity<Void> deleteSkill(@PathVariable Long usuarioId, @PathVariable Long skillId) {
+        skillService.deleteSkill(usuarioId, skillId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Altera o level da skill de um usuario")
+    @PutMapping("/skills/{usuarioId}/{skillId}")
+    public ResponseEntity<UsuarioSkillResponseDto> updateSkill(
+            @PathVariable Long usuarioId,
+            @PathVariable Long skillId,
+            @RequestBody UsuarioSkillRequestDto dto) {
+        return ResponseEntity.ok(skillService.updateSkill(usuarioId, skillId, dto));
+    }
+
+    @Operation(summary = "Lista todas as skills")
+    @GetMapping("/skills")
+    public ResponseEntity<List<UsuarioSkillResponseDto>> findAllSkills() {
+        return ResponseEntity.ok(skillService.findAllSkills());
+    }
+
 }

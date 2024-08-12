@@ -23,14 +23,16 @@ public class TokenService {
             Algorithm algorithm = Algorithm.HMAC256(secret);
             String token = JWT.create()
                     .withIssuer("auth-api")
-                    .withSubject(user.getUsername()) //talvez mudar para getLogin
+                    .withSubject(user.getUsername())
+                    .withClaim("userId", user.getId())
                     .withExpiresAt(generateExpirationDate())
                     .sign(algorithm);
             return token;
-        } catch (JWTCreationException exception){
+        } catch (JWTCreationException exception) {
             throw new RuntimeException("Erro ao criar o token", exception);
         }
     }
+
 
     public String validateToken(String token){
         try {
@@ -49,4 +51,19 @@ public class TokenService {
     private Instant generateExpirationDate() {
         return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.of("-03:00"));
     }
+
+    public Long getUserIdFromToken(String token) {
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(secret);
+            return JWT.require(algorithm)
+                    .withIssuer("auth-api")
+                    .build()
+                    .verify(token)
+                    .getClaim("userId") // Obtém o ID do usuário do token
+                    .asLong();
+        } catch (JWTVerificationException exception) {
+            return null;
+        }
+    }
+
 }
