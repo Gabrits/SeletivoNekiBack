@@ -1,4 +1,4 @@
-package com.SeletivoNeki.Exception;
+package com.SeletivoNeki.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

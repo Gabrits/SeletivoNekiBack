@@ -1,5 +1,6 @@
-package com.SeletivoNeki.security;
+package com.SeletivoNeki.config;
 
+import com.SeletivoNeki.security.SecurityFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,21 +24,19 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity
+        httpSecurity
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.GET, "/skills").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/swagger-ui/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/v3/api-docs/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/webjars/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/auth/cadastro").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/usuarios/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/usuarios/**").permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/usuarios/**").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/usuarios/**").permitAll()
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
-                .build();
+                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return httpSecurity.build();
     }
 
     @Bean
@@ -50,3 +49,4 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 }
+

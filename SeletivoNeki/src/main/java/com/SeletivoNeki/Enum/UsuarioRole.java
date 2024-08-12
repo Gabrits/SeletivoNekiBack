@@ -1,4 +1,4 @@
-package com.SeletivoNeki.model;
+package com.SeletivoNeki.Enum;
 
 public enum UsuarioRole {
 

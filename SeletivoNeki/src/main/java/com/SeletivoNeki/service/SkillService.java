@@ -1,6 +1,6 @@
 package com.SeletivoNeki.service;
 
-import com.SeletivoNeki.Exception.NotFoundException;
+import com.SeletivoNeki.exception.NotFoundException;
 import com.SeletivoNeki.dto.SkillDto;
 import com.SeletivoNeki.dto.UsuarioSkillRequestDto;
 import com.SeletivoNeki.dto.UsuarioSkillResponseDto;
@@ -12,7 +12,6 @@ import com.SeletivoNeki.repository.UsuarioRepository;
 import com.SeletivoNeki.repository.UsuarioSkillRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.ArrayList;
 import java.util.List;

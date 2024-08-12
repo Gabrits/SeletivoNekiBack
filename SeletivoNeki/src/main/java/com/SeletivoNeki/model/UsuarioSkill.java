@@ -1,6 +1,6 @@
 package com.SeletivoNeki.model;
 
-import com.SeletivoNeki.dto.UsuarioSkillRequestDto;
+import com.SeletivoNeki.Enum.LevelSkill;
 import jakarta.persistence.*;
 
 @Entity

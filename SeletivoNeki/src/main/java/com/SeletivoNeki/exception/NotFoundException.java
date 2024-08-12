@@ -1,4 +1,4 @@
-package com.SeletivoNeki.Exception;
+package com.SeletivoNeki.exception;
 
 public class NotFoundException extends RuntimeException{
 

@@ -1,5 +1,6 @@
 package com.SeletivoNeki.model;
 
+import com.SeletivoNeki.Enum.UsuarioRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
